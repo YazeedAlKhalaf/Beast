@@ -1,0 +1,61 @@
+name: beast
+description: A new Flutter project.
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.2.2 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  
+  # cached network image
+  cached_network_image: ^2.0.0
+
+  # shimmer
+  shimmer: ^1.1.0
+
+  # gradient appbar
+  gradient_app_bar: ^0.1.3
+
+  # cloud firestore
+  cloud_firestore: ^0.13.4+1
+
+  # firebase auth
+  firebase_auth: ^0.15.3
+
+  # http request
+  http: ^0.12.0+2
+
+  # async package to add additional Cancellable operations
+  async: ^2.0.8
+
+  # get it
+  get_it: ^3.0.0+1
+
+  # provider
+  provider: ^3.2.0
+
+  # provider architecture
+  provider_architecture: ^1.0.3
+
+  # cupertino icons (IOS Style)
+  cupertino_icons: ^0.1.2
+
+  # firebase storage
+  firebase_storage: ^3.1.5
+
+  # image picker
+  image_picker: ^0.6.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/title.png
+    - assets/images/icon_large.png
