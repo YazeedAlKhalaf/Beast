@@ -13,14 +13,14 @@ class FirestoreService {
       Firestore.instance.collection(USERS_COLLECTION_NAME);
   final CollectionReference _messagesCollectionReference =
       Firestore.instance.collection(MESSAGES_COLLECTION_NAME);
-  final CollectionReference _mediaCollectionReference =
-      Firestore.instance.collection(MEDIA_COLLECTION_NAME);
   final CollectionReference _chatsCollectionReference =
       Firestore.instance.collection(CHATS_COLLECTION_NAME);
 
   Future createUser(User user) async {
     try {
-      await _usersCollectionReference.document(user.uid).setData(user.toJson());
+      await _usersCollectionReference.document(user.uid).setData(
+            user.toJson(),
+          );
     } catch (e) {
       // TODO: Find or create a way to repeat error handling without so much repeated code
       if (e is PlatformException) {
@@ -85,6 +85,17 @@ class FirestoreService {
     });
   }
 
+  Future<List<String>> getFriendsIds(User currentUser) async {
+    List<String> friendsIds = [];
+    DocumentSnapshot userDocSnap =
+        await _usersCollectionReference.document(currentUser.uid).get();
+    userDocSnap.data['friends'].forEach((friendId) {
+      friendsIds.add(friendId);
+    });
+
+    return friendsIds;
+  }
+
   Future<List<User>> getFriends(List<String> friendsIds) async {
     List<User> freinds = [];
     for (String friendId in friendsIds) {
@@ -94,6 +105,54 @@ class FirestoreService {
       freinds.add(friend);
     }
     return freinds;
+  }
+
+  // Future changeFriendsList({
+  //   @required User currentUser,
+  //   @required User friendToAdd,
+  // }) async {
+  //   List<String> friends = [];
+  //   await _usersCollectionReference.document(currentUser.uid).get().then((doc) {
+  //     doc.data['friends'].forEach((v) {
+  //       friends.add(v);
+  //     });
+  //   });
+
+  //   if (friends.contains(friendToAdd.uid)) {
+  //     removeFromFriendsList(
+  //       currentUser: currentUser,
+  //       friendToRemove: friendToAdd,
+  //     );
+  //   } else {
+  //     addToFriendsList(
+  //       currentUser: currentUser,
+  //       friendToAdd: friendToAdd,
+  //     );
+  //   }
+  // }
+
+  Future changeFriendsList({
+    @required User currentUser,
+    @required User friendToAdd,
+  }) async {
+    List<String> friends = [];
+    await _usersCollectionReference.document(currentUser.uid).get().then((doc) {
+      doc.data['friends'].forEach((friendId) {
+        friends.add(friendId);
+      });
+    });
+
+    if (!friends.contains(friendToAdd.uid)) {
+      addToFriendsList(
+        currentUser: currentUser,
+        friendToAdd: friendToAdd,
+      );
+    } else {
+      removeFromFriendsList(
+        currentUser: currentUser,
+        friendToRemove: friendToAdd,
+      );
+    }
   }
 
   Future addToFriendsList({
@@ -286,6 +345,5 @@ class FirestoreService {
         .document('${receiver.uid}')
         .get()
         .asStream();
-    // .snapshots();
   }
 }

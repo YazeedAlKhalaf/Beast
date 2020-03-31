@@ -1,6 +1,5 @@
 import 'package:beast/src/models/message.dart';
 import 'package:beast/src/models/user.dart';
-import 'package:flutter/cupertino.dart';
 
 class Chat {
   User sender;
@@ -32,7 +31,6 @@ class Chat {
   Chat.fromJson(Map<String, dynamic> map) {
     this.sender = convertMapToUser(map, 'sender');
     this.receiver = convertMapToUser(map, 'receiver');
-    // this.messages = [];
     this.messages = convertMapToMessage(map);
   }
 

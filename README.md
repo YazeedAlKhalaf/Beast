@@ -16,10 +16,10 @@ This application uses Flutter as Front-end and Firebase as Back-end.
     * [x] Sending messages
     * [x] Sending images
     * [x] View Photos in full screen (Needs improvement)
+    * [x] Adding users as friends
     
 * Features(Under Development):
     * [ ] Sending videos
-    * [ ] Adding users as friends
     * [ ] Making profiles for users
 
 More feature will be added in the future!

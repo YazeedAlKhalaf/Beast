@@ -4,6 +4,7 @@ import 'package:beast/src/locator.dart';
 import 'package:beast/src/models/user.dart';
 import 'package:beast/src/services/firestore_service.dart';
 import 'package:beast/src/ui/shared/ui_helpers.dart';
+import 'package:beast/src/ui/widgets/busy_button.dart';
 import 'package:beast/src/ui/widgets/custom_tile.dart';
 import 'package:beast/src/viewmodels/base_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,16 +19,24 @@ class SearchViewModel extends BaseModel {
 
   initStateFunc({
     @required BuildContext contextFunc,
-  }) {
+  }) async {
     getAllUsers();
     getVariables(
       contextFunc: contextFunc,
     );
+    getFriendsIds();
   }
 
   List<User> userList;
   String query = '';
   TextEditingController searchController = TextEditingController();
+
+  List<String> friendsIds = [];
+
+  getFriendsIds() async {
+    friendsIds = await firestoreService.getFriendsIds(currentUser);
+    notifyListeners();
+  }
 
   getAllUsers() async {
     userList = await _firestoreService.getAllUsers(currentUser);
@@ -49,45 +58,56 @@ class SearchViewModel extends BaseModel {
         preferredSize: Size.fromHeight(
           kToolbarHeight + screenWidth(context) * 0.04,
         ),
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth(context) * 0.04,
-          ),
-          child: TextField(
-            controller: searchController,
-            onChanged: (val) {
-              query = val;
-              getAllUsers();
-              notifyListeners();
-            },
-            cursorColor: Config.blackColor,
-            autofocus: true,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: screenWidth(context) * 0.07,
-            ),
-            decoration: InputDecoration(
-              suffixIcon: IconButton(
-                icon: Icon(
-                  Icons.close,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  WidgetsBinding.instance.addPostFrameCallback(
-                    (_) => searchController.clear(),
-                  );
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(
+                left: screenWidth(context) * 0.04,
+              ),
+              child: TextField(
+                controller: searchController,
+                onChanged: (val) {
+                  query = val;
+                  getAllUsers();
+                  notifyListeners();
                 },
-              ),
-              border: InputBorder.none,
-              hintText: "Search",
-              hintStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: screenWidth(context) * 0.07,
-                color: Color(0x88ffffff),
+                cursorColor: Config.blackColor,
+                autofocus: false,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: screenWidth(context) * 0.07,
+                ),
+                decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      WidgetsBinding.instance.addPostFrameCallback(
+                        (_) => searchController.clear(),
+                      );
+                    },
+                  ),
+                  border: InputBorder.none,
+                  hintText: "Search",
+                  hintStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: screenWidth(context) * 0.07,
+                    color: Color(0x88ffffff),
+                  ),
+                ),
               ),
             ),
-          ),
+            busy
+                ? LinearProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(
+                      Config.blackColor,
+                    ),
+                  )
+                : Container(),
+          ],
         ),
       ),
     );
@@ -104,9 +124,6 @@ class SearchViewModel extends BaseModel {
             bool matchesName = _getName.contains(_query);
 
             return (matchesUsername || matchesName);
-
-            // (User user) => (user.username.toLowerCase().contains(query.toLowerCase()) ||
-            //     (user.name.toLowerCase().contains(query.toLowerCase()))),
           }).toList();
 
     return Container(
@@ -150,6 +167,26 @@ class SearchViewModel extends BaseModel {
               style: TextStyle(
                 color: Config.greyColor,
               ),
+            ),
+            trailing: BusyButton(
+              title: friendsIds.contains(searchedUser.uid) ? 'Add' : 'Remove',
+              busy: busy,
+              onPressed: () async {
+                print(currentUser.friends);
+
+                setBusy(true);
+
+                notifyListeners();
+
+                await firestoreService.changeFriendsList(
+                  currentUser: currentUser,
+                  friendToAdd: searchedUser,
+                );
+
+                await getFriendsIds();
+
+                setBusy(false);
+              },
             ),
           );
         }),

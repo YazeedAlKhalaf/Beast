@@ -1,3 +1,6 @@
+import 'package:beast/src/locator.dart';
+import 'package:beast/src/services/authentication_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +20,7 @@ class _BaseWidgetState<T extends ChangeNotifier> extends State<BaseWidget<T>> {
   T _model;
 
   @override
-  void initState() {
+  void initState() async {
     _model = widget.model;
 
     if (widget.onModelReady != null) {
