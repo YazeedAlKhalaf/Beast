@@ -13,6 +13,7 @@ import 'package:beast/src/viewmodels/base_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 
 class ChatViewModel extends BaseModel {
   initStateFunc({
@@ -28,6 +29,8 @@ class ChatViewModel extends BaseModel {
   TextEditingController textFieldController = TextEditingController();
 
   Message message;
+
+  List<String> mediaUrls = [];
 
   bool isWriting = false;
 
@@ -78,17 +81,21 @@ class ChatViewModel extends BaseModel {
     );
   }
 
-  sendMessage() {
+  sendMessage() async {
     var text = textFieldController.text;
     textFieldController.clear();
 
     setWriting(false);
+    setBusy(true);
 
-    firestoreService.addMessageToDb(
+    await firestoreService.addMessageToDb(
       sender: currentUser,
       receiver: receiver,
       text: text,
+      messageType: TEXT_MESSAGE_TYPE,
     );
+
+    setBusy(false);
   }
 
   pickImage({
@@ -102,15 +109,47 @@ class ChatViewModel extends BaseModel {
     if (selectedImage != null) {
       setBusy(true);
 
-      await storageService.uploadImage(
-        image: selectedImage,
+      await storageService.uploadMedia(
+        media: [
+          selectedImage,
+        ],
         receiver: receiver,
         sender: currentUser,
+        messageType: IMAGE_MESSAGE_TYPE,
       );
 
       setBusy(false);
     } else {
       print('there was an error');
+    }
+  }
+
+  pickVideo({
+    @required ImageSource source,
+  }) async {
+    popCurrentContext();
+    File selectedVideo = await utils.pickVideo(
+      source: source,
+    );
+
+    if (selectedVideo != null) {
+      setBusy(true);
+
+      await storageService.uploadMedia(
+        media: [
+          selectedVideo,
+        ],
+        receiver: receiver,
+        sender: currentUser,
+        messageType: VIDEO_MESSAGE_TYPE,
+      );
+
+      setBusy(false);
+    } else {
+      dialogService.showDialog(
+        title: 'Something went wrong!',
+        description: 'Please try again later!',
+      );
     }
   }
 
@@ -211,22 +250,104 @@ class ChatViewModel extends BaseModel {
   }
 
   getMessage() {
-    return message.type != IMAGE_MESSAGE_TYPE
-        ? Text(
-            message.message,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: screenWidth(context) * 0.035,
-            ),
-          )
-        : Container(
-            child: CachedImage(
-              url: message.photoUrl,
-              onTap: () {
-                print('This is an image. URL: ${message.photoUrl}');
-              },
-            ),
-          );
+    switch (message.type) {
+      case TEXT_MESSAGE_TYPE:
+        return Text(
+          message.message,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: screenWidth(context) * 0.035,
+          ),
+        );
+        break;
+
+      case IMAGE_MESSAGE_TYPE:
+        return GestureDetector(
+          onTap: () {
+            if (message.mediaUrls.length != 0) {
+              mediaUrls = message.mediaUrls;
+            }
+            navigateToViewMediaView();
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  Container(
+                    constraints: BoxConstraints(
+                      maxHeight: screenWidth(context) * 0.4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Config.separatorColor,
+                    ),
+                    child: CachedImage(
+                      url: message.mediaUrls[0],
+                      onTap: () {
+                        print('This is an image. URL: ${message.mediaUrls}');
+                      },
+                    ),
+                  ),
+                  Opacity(
+                    opacity: message.mediaUrls.length > 1 ? 0.5 : 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Config.separatorColor,
+                      ),
+                      height: screenWidth(context) * 0.4,
+                    ),
+                  ),
+                  Opacity(
+                    opacity: message.mediaUrls.length > 1 ? 1 : 0,
+                    child: Text(
+                      '+${(message.mediaUrls.length - 1).toString()}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: screenWidth(context) * 0.08,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              message.message != ''
+                  ? Text(
+                      message.message,
+                      style: TextStyle(
+                        fontSize: screenWidth(context) * 0.04,
+                        color: Config.whiteColor,
+                      ),
+                      overflow: TextOverflow.clip,
+                    )
+                  : Container(),
+            ],
+          ),
+        );
+        break;
+
+      // case VIDEO_MESSAGE_TYPE:
+      //   return message.mediaUrls.length > 0
+      //       ? VideoPlayer(
+      //           VideoPlayerController.network(
+      //             message.mediaUrls[0],
+      //           ),
+      //         )
+      //       : Text('No Media Found');
+      //   break;
+
+      default:
+        return Text(
+          'Error fetching',
+          style: TextStyle(
+            fontSize: screenWidth(context) * 0.04,
+            color: Config.whiteColor,
+          ),
+          overflow: TextOverflow.clip,
+        );
+    }
   }
 
   Widget receiverLayout() {
@@ -301,7 +422,7 @@ class ChatViewModel extends BaseModel {
                   children: <Widget>[
                     ModalTile(
                       title: "Photo From Gallery",
-                      subtitle: "Share Photos and Video",
+                      subtitle: "Share Photos",
                       icon: Icons.image,
                       onTap: () {
                         print('GALLERY');
@@ -312,7 +433,7 @@ class ChatViewModel extends BaseModel {
                     ),
                     ModalTile(
                       title: "Photo From Camera",
-                      subtitle: "Share Photos and Video",
+                      subtitle: "Share Photos",
                       icon: Icons.camera,
                       onTap: () {
                         print('CAMERA');
@@ -321,6 +442,28 @@ class ChatViewModel extends BaseModel {
                         );
                       },
                     ),
+                    // ModalTile(
+                    //   title: "Video From Gallery",
+                    //   subtitle: "Share Videos",
+                    //   icon: Icons.image,
+                    //   onTap: () {
+                    //     print('GALLERY');
+                    //     pickVideo(
+                    //       source: ImageSource.gallery,
+                    //     );
+                    //   },
+                    // ),
+                    // ModalTile(
+                    //   title: "Video From Camera",
+                    //   subtitle: "Share Videos",
+                    //   icon: Icons.camera,
+                    //   onTap: () {
+                    //     print('CAMERA');
+                    //     pickVideo(
+                    //       source: ImageSource.camera,
+                    //     );
+                    //   },
+                    // ),
                   ],
                 ),
               ),
@@ -426,6 +569,13 @@ class ChatViewModel extends BaseModel {
               : Container()
         ],
       ),
+    );
+  }
+
+  navigateToViewMediaView() {
+    navigationService.navigateTo(
+      ViewMediaViewRoute,
+      arguments: receiver,
     );
   }
 }

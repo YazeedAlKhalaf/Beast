@@ -9,16 +9,19 @@ class StorageService {
   final FirestoreService _firestoreService = locator<FirestoreService>();
   StorageReference _storageReference;
 
-  Future<String> uploadImageToStorage({
+  Future<String> uploadMediaToStorage({
     @required User sender,
     @required User receiver,
-    @required File image,
+    @required List<File> media,
   }) async {
     try {
       _storageReference = FirebaseStorage.instance.ref().child(
-          'images/${DateTime.now().millisecondsSinceEpoch}_sender${sender.uid}_receiver${receiver.uid}');
+            'messages_media/media/sender_${sender.uid}_receiver_${receiver.uid}/${DateTime.now().millisecondsSinceEpoch}_sender${sender.uid}_receiver${receiver.uid}',
+          );
 
-      StorageUploadTask _storageUploadTask = _storageReference.putFile(image);
+      StorageUploadTask _storageUploadTask = _storageReference.putFile(
+        media[0],
+      );
 
       var url =
           await (await _storageUploadTask.onComplete).ref.getDownloadURL();
@@ -29,21 +32,26 @@ class StorageService {
     }
   }
 
-  Future uploadImage({
+  Future uploadMedia({
     @required User sender,
     @required User receiver,
-    @required File image,
+    @required List<File> media,
+    @required String messageType,
   }) async {
-    String url = await uploadImageToStorage(
+    String url = await uploadMediaToStorage(
       sender: sender,
       receiver: receiver,
-      image: image,
+      media: media,
     );
 
-    await _firestoreService.setImageMessage(
-      url: url,
-      receiver: receiver,
+    await _firestoreService.addMessageToDb(
       sender: sender,
+      receiver: receiver,
+      text: '',
+      mediaUrls: [
+        url,
+      ],
+      messageType: messageType,
     );
   }
 }

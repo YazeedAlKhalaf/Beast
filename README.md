@@ -9,12 +9,13 @@ It will be a great thing!
 This application uses Flutter as Front-end and Firebase as Back-end.
 
 * Features(Done):
-    * [x] Login with email and password
-    * [x] Sign up with email and pasword
+    * [x] Login with email and password (Needs improvement in validation)
+    * [x] Sign up with email and pasword (Needs improvement in validation)
     * [x] Sign out! (small but important) 😊
     * [x] Search for users
     * [x] Sending messages
     * [x] Sending images
+    * [x] View Photos in full screen (Needs improvement)
     
 * Features(Under Development):
     * [ ] Sending videos

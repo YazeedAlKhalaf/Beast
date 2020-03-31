@@ -6,3 +6,4 @@ const String SearchViewRoute = "SearchView";
 const String ChatViewRoute = "ChatView";
 const String UserDetailsViewRoute = "UserDetailsView";
 const String ProfileViewRoute = "ProfileView";
+const String ViewMediaViewRoute = "ViewMediaView";

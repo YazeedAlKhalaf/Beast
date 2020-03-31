@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:beast/src/constants/strings.dart';
+import 'package:beast/src/models/chat.dart';
 import 'package:beast/src/models/message.dart';
 import 'package:beast/src/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,10 @@ class FirestoreService {
       Firestore.instance.collection(USERS_COLLECTION_NAME);
   final CollectionReference _messagesCollectionReference =
       Firestore.instance.collection(MESSAGES_COLLECTION_NAME);
+  final CollectionReference _mediaCollectionReference =
+      Firestore.instance.collection(MEDIA_COLLECTION_NAME);
+  final CollectionReference _chatsCollectionReference =
+      Firestore.instance.collection(CHATS_COLLECTION_NAME);
 
   Future createUser(User user) async {
     try {
@@ -119,26 +124,88 @@ class FirestoreService {
     @required User sender,
     @required User receiver,
     @required String text,
+    List<String> mediaUrls,
+    @required String messageType,
   }) async {
-    Message _message = Message(
-      receiverId: receiver.uid,
-      senderId: sender.uid,
-      message: text,
-      timestamp: Timestamp.now(),
-      type: TEXT_MESSAGE_TYPE,
-    );
+    try {
+      if ((await checkIfChatIsCreated(sender: sender, receiver: receiver)) ==
+          false) {
+        await createChat(
+          sender: sender,
+          receiver: receiver,
+        );
+        print('created chat');
+      }
 
-    var messageMap = _message.toJson();
+      Message _message;
+      var messageMap;
 
-    await _messagesCollectionReference
-        .document(_message.senderId)
-        .collection(_message.receiverId)
-        .add(messageMap);
+      Chat chat;
+      var chatMap;
 
-    await _messagesCollectionReference
-        .document(_message.receiverId)
-        .collection(_message.senderId)
-        .add(messageMap);
+      _message = Message(
+        receiverId: receiver.uid,
+        senderId: sender.uid,
+        message: text,
+        timestamp: Timestamp.now(),
+        type: messageType,
+        mediaUrls: messageType == TEXT_MESSAGE_TYPE ? [] : mediaUrls,
+      );
+
+      messageMap = _message.toJson();
+
+      await _messagesCollectionReference
+          .document(_message.senderId)
+          .collection(_message.receiverId)
+          .add(messageMap);
+
+      await _messagesCollectionReference
+          .document(_message.receiverId)
+          .collection(_message.senderId)
+          .add(messageMap);
+
+      List<Message> messages = await getMessagesList(
+        sender: sender,
+        receiver: receiver,
+      );
+
+      chat = Chat(
+        sender: sender,
+        receiver: receiver,
+        messages: messages,
+      );
+
+      chatMap = chat.toJson();
+
+      await _chatsCollectionReference
+          .document('${sender.uid}')
+          .collection('${sender.uid}')
+          .document('${receiver.uid}')
+          .updateData(
+            chatMap,
+          );
+    } catch (e) {
+      return e;
+    }
+  }
+
+  Future<List<Message>> getMessagesList({
+    @required User sender,
+    @required User receiver,
+  }) async {
+    List<Message> messages = [];
+
+    QuerySnapshot qs = await _messagesCollectionReference
+        .document(sender.uid)
+        .collection(receiver.uid)
+        .getDocuments();
+
+    qs.documents.forEach((doc) {
+      Message m = Message.fromJson(doc.data);
+      messages.add(m);
+    });
+
+    return messages;
   }
 
   Stream<QuerySnapshot> messagesStream({
@@ -152,30 +219,73 @@ class FirestoreService {
         .snapshots();
   }
 
-  Future setImageMessage({
-    @required String url,
+  Future createChat({
     @required User sender,
     @required User receiver,
   }) async {
-    Message _message = Message.imageMessage(
-      receiverId: receiver.uid,
-      senderId: sender.uid,
-      message: "",
-      timestamp: Timestamp.now(),
-      photoUrl: url,
-      type: IMAGE_MESSAGE_TYPE,
+    Chat chat = Chat(
+      sender: sender,
+      receiver: receiver,
+      messages: [],
     );
 
-    var messageMap = _message.toImageJson();
+    var chatMap = chat.toJson();
 
-    await _messagesCollectionReference
-        .document(_message.senderId)
-        .collection(_message.receiverId)
-        .add(messageMap);
+    await _chatsCollectionReference
+        .document('${sender.uid}')
+        .collection('${sender.uid}')
+        .document('${receiver.uid}')
+        .setData(
+          chatMap,
+        );
 
-    await _messagesCollectionReference
-        .document(_message.receiverId)
-        .collection(_message.senderId)
-        .add(messageMap);
+    await _chatsCollectionReference
+        .document('${receiver.uid}')
+        .collection('${receiver.uid}')
+        .document('${sender.uid}')
+        .setData(
+          chatMap,
+        );
+  }
+
+  Future checkIfChatIsCreated({
+    @required User sender,
+    @required User receiver,
+  }) async {
+    try {
+      Future<bool> checkChats() async {
+        if (await _chatsCollectionReference
+                .document('${sender.uid}')
+                .collection('${sender.uid}')
+                .document('${receiver.uid}')
+                .get() !=
+            null) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      if (await checkChats() == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('cc' + e);
+    }
+  }
+
+  Stream<DocumentSnapshot> chatsStream({
+    @required User sender,
+    @required User receiver,
+  }) {
+    return _chatsCollectionReference
+        .document('${sender.uid}')
+        .collection('${sender.uid}')
+        .document('${receiver.uid}')
+        .get()
+        .asStream();
+    // .snapshots();
   }
 }

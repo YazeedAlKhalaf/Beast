@@ -8,6 +8,7 @@ import 'package:beast/src/ui/views/user_details_view.dart';
 import 'package:flutter/material.dart';
 import 'package:beast/src/ui/views/login_view.dart';
 import 'package:beast/src/ui/views/signup_view.dart';
+import 'package:beast/src/ui/views/view_media_view.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -54,6 +55,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(
         routeName: settings.name,
         viewToShow: ProfileView(),
+      );
+    case ViewMediaViewRoute:
+      return _getPageRoute(
+        routeName: settings.name,
+        viewToShow: ViewMediaView(
+          receiver: settings.arguments,
+        ),
       );
     default:
       return MaterialPageRoute(

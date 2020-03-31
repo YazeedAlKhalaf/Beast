@@ -7,11 +7,12 @@ class BusyButton extends StatefulWidget {
   final String title;
   final Function onPressed;
   final bool enabled;
-  const BusyButton(
-      {@required this.title,
-      this.busy = false,
-      @required this.onPressed,
-      this.enabled = true});
+  const BusyButton({
+    @required this.title,
+    this.busy = false,
+    @required this.onPressed,
+    this.enabled = true,
+  });
 
   @override
   _BusyButtonState createState() => _BusyButtonState();
