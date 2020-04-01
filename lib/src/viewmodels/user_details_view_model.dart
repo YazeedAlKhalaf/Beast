@@ -105,6 +105,9 @@ class UserDetailsViewModel extends BaseModel {
                             text: utils.getInitials(
                               receiver.fullName,
                             ),
+                            image: displayProfileImage(
+                              user: receiver,
+                            ),
                           ),
                           verticalSpaceMedium,
                           Column(

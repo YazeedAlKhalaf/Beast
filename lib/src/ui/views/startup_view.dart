@@ -9,8 +9,12 @@ class StartUpView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelProvider<StartUpViewModel>.withConsumer(
       viewModel: StartUpViewModel(),
-      onModelReady: (model) => model.handleStartUpLogic(),
-      builder: (context, model, child) {
+      onModelReady: (StartUpViewModel model) => model.handleStartUpLogic(),
+      builder: (
+        BuildContext context,
+        StartUpViewModel model,
+        Widget child,
+      ) {
         return Scaffold(
           backgroundColor: Config.blackColor,
           body: Center(

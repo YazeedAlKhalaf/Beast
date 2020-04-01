@@ -13,10 +13,14 @@ class _SearchViewState extends State<SearchView> {
   Widget build(BuildContext context) {
     return ViewModelProvider.withConsumer(
       viewModel: SearchViewModel(),
-      onModelReady: (model) => model.initStateFunc(
+      onModelReady: (SearchViewModel model) => model.initStateFunc(
         contextFunc: context,
       ),
-      builder: (context, model, child) {
+      builder: (
+        BuildContext context,
+        SearchViewModel model,
+        Widget child,
+      ) {
         return Scaffold(
           backgroundColor: Config.blackColor,
           appBar: model.searchAppBar(),

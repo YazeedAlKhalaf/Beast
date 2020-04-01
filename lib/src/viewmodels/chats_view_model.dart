@@ -5,7 +5,6 @@ import 'package:beast/src/models/chat.dart';
 import 'package:beast/src/models/message.dart';
 import 'package:beast/src/models/user.dart';
 import 'package:beast/src/ui/shared/ui_helpers.dart';
-import 'package:beast/src/ui/widgets/cached_image.dart';
 import 'package:beast/src/ui/widgets/custom_app_bar.dart';
 import 'package:beast/src/ui/widgets/custom_tile.dart';
 import 'package:beast/src/ui/widgets/user_circle.dart';
@@ -194,10 +193,12 @@ class ChatsViewModel extends BaseModel {
                       width: screenWidth(context) * 0.1,
                       height: screenWidth(context) * 0.1,
                       textSize: screenWidth(context) * 0.035,
-                      image: chat.receiver.profilePhoto != null
-                          ? Image.network(chat.receiver.profilePhoto)
-                          : null,
-                      text: utils.getInitials(chat.receiver.fullName),
+                      text: utils.getInitials(
+                        chat.receiver.fullName,
+                      ),
+                      image: displayProfileImage(
+                        user: chat.receiver,
+                      ),
                     ),
                   ),
                 ),
@@ -217,6 +218,9 @@ class ChatsViewModel extends BaseModel {
         height: screenWidth(context) * 0.1,
         textSize: screenWidth(context) * 0.035,
         text: userInitials,
+        image: displayProfileImage(
+          user: currentUser,
+        ),
         onTap: () {
           print(userInitials);
           navigateToProfileView();

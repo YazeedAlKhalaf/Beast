@@ -81,7 +81,7 @@ class FirestoreService {
 
   Stream<List<User>> fetchAllUsers(User currentUser) {
     return _usersCollectionReference.snapshots().map((snapshot) {
-      _userListFromSnapshot(snapshot, currentUser);
+      return _userListFromSnapshot(snapshot, currentUser);
     });
   }
 
@@ -323,5 +323,16 @@ class FirestoreService {
         .collection('${sender.uid}')
         .orderBy(TIMESTAMP_FIELD_NAME, descending: false)
         .snapshots();
+  }
+
+  Future updateUserData({
+    @required User currentUser,
+    @required User currentUserWithNewData,
+  }) async {
+    var userMap = currentUserWithNewData.toJson();
+
+    await _usersCollectionReference.document(currentUser.uid).updateData(
+          userMap,
+        );
   }
 }

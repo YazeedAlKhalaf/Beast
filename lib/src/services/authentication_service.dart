@@ -74,8 +74,10 @@ class AuthenticationService {
     }
   }
 
-  Future populateCurrentUser(FirebaseUser user) async {
+  Future rePopulateCurrentUser() async {
     try {
+      FirebaseUser user = await _firebaseAuth.currentUser();
+
       if (user != null) {
         _currentUser = await _firestoreService.getUser(user);
       }
@@ -83,12 +85,6 @@ class AuthenticationService {
       print('e ' + e.message);
     }
   }
-
-  // getCurrentUser() async {
-  //   var user = await _firebaseAuth.currentUser();
-  //   User currentUser = await _firestoreService.getUser(user);
-  //   _currentUser = currentUser;
-  // }
 
   Future<void> signOut() async {
     return await _firebaseAuth.signOut();

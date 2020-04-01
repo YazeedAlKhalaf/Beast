@@ -20,11 +20,15 @@ class _ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     return ViewModelProvider.withConsumer(
       viewModel: ChatViewModel(),
-      onModelReady: (model) => model.initStateFunc(
+      onModelReady: (ChatViewModel model) => model.initStateFunc(
         contextFromFunc: context,
         receiverFromFunc: widget.receiver,
       ),
-      builder: (context, model, child) {
+      builder: (
+        BuildContext context,
+        ChatViewModel model,
+        Widget child,
+      ) {
         return Scaffold(
           backgroundColor: Config.blackColor,
           appBar: model.customAppBar(),

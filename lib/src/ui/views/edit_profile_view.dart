@@ -1,31 +1,24 @@
 import 'package:beast/src/constants/config.dart';
-import 'package:beast/src/models/user.dart';
+import 'package:beast/src/viewmodels/edit_profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider_architecture/provider_architecture.dart';
-import 'package:beast/src/viewmodels/view_media_view_model.dart';
 
-class ViewMediaView extends StatefulWidget {
-  final User receiver;
-
-  ViewMediaView({
-    this.receiver,
-  });
+class EditProfileView extends StatefulWidget {
   @override
-  _ViewMediaViewState createState() => _ViewMediaViewState();
+  _EditProfileViewState createState() => _EditProfileViewState();
 }
 
-class _ViewMediaViewState extends State<ViewMediaView> {
+class _EditProfileViewState extends State<EditProfileView> {
   @override
   Widget build(BuildContext context) {
     return ViewModelProvider.withConsumer(
-      viewModel: ViewMediaViewModel(),
-      onModelReady: (ViewMediaViewModel model) => model.initState(
-        receiverFromFunc: widget.receiver,
+      viewModel: EditProfileViewModel(),
+      onModelReady: (EditProfileViewModel model) => model.initStateFunc(
         contextFromFunc: context,
       ),
       builder: (
         BuildContext context,
-        ViewMediaViewModel model,
+        EditProfileViewModel model,
         Widget child,
       ) {
         return Scaffold(

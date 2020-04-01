@@ -19,11 +19,15 @@ class _UserDetailsViewState extends State<UserDetailsView> {
   Widget build(BuildContext context) {
     return ViewModelProvider.withConsumer(
       viewModel: UserDetailsViewModel(),
-      onModelReady: (model) => model.initStateFunc(
+      onModelReady: (UserDetailsViewModel model) => model.initStateFunc(
         contextFromFunc: context,
         receiverFromFunc: widget.receiver,
       ),
-      builder: (context, model, child) {
+      builder: (
+        BuildContext context,
+        UserDetailsViewModel model,
+        Widget child,
+      ) {
         return Scaffold(
           backgroundColor: Config.blackColor,
           appBar: model.customAppBar(),

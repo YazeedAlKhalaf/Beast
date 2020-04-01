@@ -17,7 +17,11 @@ class _SignUpViewState extends State<SignUpView> {
   Widget build(BuildContext context) {
     return ViewModelProvider<SignUpViewModel>.withConsumer(
       viewModel: SignUpViewModel(),
-      builder: (context, model, child) {
+      builder: (
+        BuildContext context,
+        SignUpViewModel model,
+        Widget child,
+      ) {
         return Scaffold(
           backgroundColor: Config.blackColor,
           body: Center(
@@ -93,6 +97,7 @@ class _SignUpViewState extends State<SignUpView> {
                         verticalSpaceMedium,
                         TextLink(
                           'Have An Account? Login!',
+                          color: Config.whiteColor,
                           onPressed: () {
                             model.navigateToLogin();
                           },

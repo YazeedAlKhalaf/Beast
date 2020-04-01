@@ -13,7 +13,11 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return ViewModelProvider<HomeViewModel>.withConsumer(
       viewModel: HomeViewModel(),
-      builder: (context, model, child) {
+      builder: (
+        BuildContext context,
+        HomeViewModel model,
+        Widget child,
+      ) {
         return Scaffold(
           backgroundColor: Config.blackColor,
           body: model.screens[model.currentIndex],

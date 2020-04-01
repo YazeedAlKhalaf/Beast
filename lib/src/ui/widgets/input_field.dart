@@ -1,3 +1,4 @@
+import 'package:beast/src/constants/config.dart';
 import 'package:beast/src/ui/shared/shared_styles.dart';
 import 'package:beast/src/ui/shared/ui_helpers.dart';
 import 'package:beast/src/ui/widgets/note_text.dart';

@@ -14,7 +14,6 @@ import 'package:beast/src/viewmodels/base_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:video_player/video_player.dart';
 
 class ChatViewModel extends BaseModel {
   initStateFunc({
@@ -122,7 +121,10 @@ class ChatViewModel extends BaseModel {
 
       setBusy(false);
     } else {
-      print('there was an error');
+      dialogService.showDialog(
+        title: 'Something went wrong!',
+        description: 'Please try again later!',
+      );
     }
   }
 

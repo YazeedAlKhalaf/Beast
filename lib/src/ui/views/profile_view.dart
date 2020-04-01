@@ -13,7 +13,14 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return ViewModelProvider.withConsumer(
       viewModel: ProfileViewModel(),
-      builder: (context, model, child) {
+      onModelReady: (ProfileViewModel model) => model.initStateFunc(
+        contextFromFunc: context,
+      ),
+      builder: (
+        BuildContext context,
+        ProfileViewModel model,
+        Widget child,
+      ) {
         return Scaffold(
           backgroundColor: Config.blackColor,
           appBar: model.customAppBar(),

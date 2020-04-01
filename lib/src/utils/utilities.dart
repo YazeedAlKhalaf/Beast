@@ -18,6 +18,8 @@ class Utils {
     File selectedImage = await ImagePicker.pickImage(
       source: source,
       imageQuality: 50,
+      maxHeight: 500,
+      maxWidth: 500,
     );
     return selectedImage;
   }

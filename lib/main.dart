@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
       ),
       navigatorKey: locator<NavigationService>().navigationKey,
       theme: ThemeData(
+        brightness: Brightness.dark,
         primaryColor: Config.blackColor,
         textTheme: Theme.of(context).textTheme.apply(
               fontFamily: 'Open Sans',

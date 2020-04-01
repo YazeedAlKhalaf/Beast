@@ -1,3 +1,4 @@
+import 'package:beast/src/constants/config.dart';
 import 'package:beast/src/ui/shared/ui_helpers.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,7 @@ class BusyOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Material(
+      color: Config.blackColor,
       child: Stack(
         children: <Widget>[
           child,

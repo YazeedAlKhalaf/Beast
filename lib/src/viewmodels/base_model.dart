@@ -5,6 +5,7 @@ import 'package:beast/src/services/dialog_service.dart';
 import 'package:beast/src/services/firestore_service.dart';
 import 'package:beast/src/services/navigation_service.dart';
 import 'package:beast/src/services/storage_service.dart';
+import 'package:beast/src/ui/widgets/cached_image.dart';
 import 'package:beast/src/utils/utilities.dart';
 import 'package:flutter/widgets.dart';
 
@@ -26,6 +27,16 @@ class BaseModel extends ChangeNotifier {
   void setBusy(bool value) {
     _busy = value;
     notifyListeners();
+  }
+
+  displayProfileImage({User user}) {
+    if (user.profilePhoto != null) {
+      return CachedImage(
+        url: user.profilePhoto,
+      );
+    } else {
+      return null;
+    }
   }
 
   void popCurrentContext() {

@@ -49,15 +49,6 @@ class DialogService {
     return _dialogCompleter.future;
   }
 
-  /// Shows a confirmation dialog
-  Future<DialogResponse> showConfirmationDialog2({
-    String title,
-    String description,
-    String confirmationTitle = 'Ok',
-    String cancelTitle = 'Cancel',
-    VoidCallback onTap,
-  }) {}
-
   /// Completes the _dialogCompleter to resume the Future's execution call
   void dialogComplete(DialogResponse response) {
     _dialogNavigationKey.currentState.pop();

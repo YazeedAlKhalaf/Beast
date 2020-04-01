@@ -6,6 +6,7 @@ import 'package:beast/src/services/firestore_service.dart';
 import 'package:beast/src/ui/shared/ui_helpers.dart';
 import 'package:beast/src/ui/widgets/busy_button.dart';
 import 'package:beast/src/ui/widgets/custom_tile.dart';
+import 'package:beast/src/ui/widgets/user_circle.dart';
 import 'package:beast/src/viewmodels/base_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -147,13 +148,14 @@ class SearchViewModel extends BaseModel {
                 receiver: searchedUser,
               );
             },
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(
-                searchedUser.profilePhoto != null
-                    ? searchedUser.profilePhoto
-                    : 'https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png',
+            leading: UserCircle(
+              width: screenWidth(context) * 0.1,
+              height: screenWidth(context) * 0.1,
+              text: utils.getInitials(searchedUser.fullName),
+              textSize: screenWidth(context) * 0.05,
+              image: displayProfileImage(
+                user: searchedUser,
               ),
-              backgroundColor: Colors.grey,
             ),
             title: Text(
               searchedUser.username,
