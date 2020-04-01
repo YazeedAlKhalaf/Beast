@@ -23,7 +23,7 @@ class Message {
     List<String> choose() {
       map['mediaUrls'].forEach((v) {
         mediaFromMap.add(v.toString());
-        print(v);
+        // print(v);
       });
       return mediaFromMap;
     }

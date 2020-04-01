@@ -46,7 +46,7 @@ class ViewMediaViewModel extends BaseModel {
 
   buildBody() {
     return StreamBuilder(
-      stream: firestoreService.chatsStream(
+      stream: firestoreService.chatStream(
         sender: currentUser,
         receiver: receiver,
       ),

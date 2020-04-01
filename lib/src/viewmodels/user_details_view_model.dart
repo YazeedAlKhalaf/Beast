@@ -2,6 +2,7 @@ import 'package:beast/src/constants/config.dart';
 import 'package:beast/src/constants/route_names.dart';
 import 'package:beast/src/models/user.dart';
 import 'package:beast/src/ui/shared/ui_helpers.dart';
+import 'package:beast/src/ui/widgets/busy_button.dart';
 import 'package:beast/src/ui/widgets/custom_app_bar.dart';
 import 'package:beast/src/ui/widgets/text_link.dart';
 import 'package:beast/src/ui/widgets/user_circle.dart';
@@ -13,6 +14,7 @@ class UserDetailsViewModel extends BaseModel {
     @required BuildContext contextFromFunc,
     @required User receiverFromFunc,
   }) {
+    getFriendsIds();
     getVariables(
       contextFromFunc: contextFromFunc,
       receiverFromFunc: receiverFromFunc,
@@ -21,6 +23,13 @@ class UserDetailsViewModel extends BaseModel {
 
   BuildContext context;
   User receiver;
+
+  List<String> friendsIds = [];
+
+  getFriendsIds() async {
+    friendsIds = await firestoreService.getFriendsIds(currentUser);
+    notifyListeners();
+  }
 
   getVariables({
     @required BuildContext contextFromFunc,
@@ -62,6 +71,8 @@ class UserDetailsViewModel extends BaseModel {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            busy ? LinearProgressIndicator() : Container(),
+
             // ======================== First Card (General Information) ========================
             Card(
               color: Colors.white,
@@ -146,6 +157,7 @@ class UserDetailsViewModel extends BaseModel {
                                   ),
                                   TextLink(
                                     'View Friends',
+                                    color: Config.blackColor,
                                     onPressed: () {
                                       // TODO: ADD FRIENDS LIST VIEWING
                                       dialogService.showDialog(
@@ -156,6 +168,90 @@ class UserDetailsViewModel extends BaseModel {
                                     },
                                   ),
                                 ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // ======================== Second Card (Actions) ========================
+            Card(
+              color: Colors.white,
+              elevation: 0.5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  screenWidth(context) * 0.05,
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(
+                  screenWidth(context) * 0.05,
+                ),
+                child: Container(
+                  width: screenWidth(context) * 0.8,
+                  child: Wrap(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Actions',
+                            style: cardTitle,
+                          ),
+                          verticalSpaceMedium,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              BusyButton(
+                                busy: busy,
+                                title: 'Start a Chat',
+                                onPressed: () async {
+                                  setBusy(true);
+                                  await firestoreService
+                                      .createChat(
+                                    sender: currentUser,
+                                    receiver: receiver,
+                                  )
+                                      .then((value) {
+                                    if (value is String) {
+                                      dialogService.showDialog(
+                                        title: 'Something went wrong!',
+                                        description: value,
+                                      );
+                                      setBusy(false);
+                                    } else {
+                                      setBusy(false);
+                                      navigationService.navigateTo(
+                                        ChatViewRoute,
+                                        arguments: receiver,
+                                      );
+                                    }
+                                  });
+                                },
+                              ),
+                              BusyButton(
+                                title: friendsIds.contains(receiver.uid)
+                                    ? 'Remove Friend'
+                                    : 'Add Friend',
+                                busy: busy,
+                                onPressed: () async {
+                                  setBusy(true);
+
+                                  await firestoreService.changeFriendsList(
+                                    currentUser: currentUser,
+                                    friendToAdd: receiver,
+                                  );
+
+                                  await getFriendsIds();
+
+                                  setBusy(false);
+                                },
                               ),
                             ],
                           ),

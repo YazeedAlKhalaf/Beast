@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:beast/src/constants/config.dart';
 import 'package:beast/src/constants/route_names.dart';
 import 'package:beast/src/constants/strings.dart';
+import 'package:beast/src/models/chat.dart';
 import 'package:beast/src/models/message.dart';
 import 'package:beast/src/models/user.dart';
 import 'package:beast/src/ui/shared/ui_helpers.dart';
@@ -26,6 +27,7 @@ class ChatViewModel extends BaseModel {
     );
   }
 
+  ScrollController _scrollController = ScrollController();
   TextEditingController textFieldController = TextEditingController();
 
   Message message;
@@ -173,12 +175,13 @@ class ChatViewModel extends BaseModel {
 
   Widget messageList() {
     return StreamBuilder(
-      stream: firestoreService.messagesStream(
+      stream: firestoreService.chatStream(
         sender: currentUser,
         receiver: receiver,
       ),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData || snapshot.data == null) {
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (!snapshot.hasData || snapshot.data.data == null) {
           return Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation(
@@ -188,14 +191,16 @@ class ChatViewModel extends BaseModel {
           );
         }
 
+        Chat chat = Chat.fromJson(snapshot.data.data);
+
         return ListView.builder(
-          reverse: true,
+          controller: _scrollController,
           padding: EdgeInsets.all(
             screenWidth(context) * 0.025,
           ),
-          itemCount: snapshot.data.documents.length,
+          itemCount: chat.messages.length,
           itemBuilder: (BuildContext context, int index) {
-            message = Message.fromJson(snapshot.data.documents[index].data);
+            message = Message.fromJson(chat.messages[index].toJson());
 
             return chatMessageItem();
           },
@@ -285,9 +290,7 @@ class ChatViewModel extends BaseModel {
                     ),
                     child: CachedImage(
                       url: message.mediaUrls[0],
-                      onTap: () {
-                        print('This is an image. URL: ${message.mediaUrls}');
-                      },
+                      onTap: () {},
                     ),
                   ),
                   Opacity(

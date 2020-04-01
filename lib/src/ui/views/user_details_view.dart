@@ -1,6 +1,5 @@
 import 'package:beast/src/constants/config.dart';
 import 'package:beast/src/models/user.dart';
-import 'package:beast/src/ui/widgets/custom_app_bar.dart';
 import 'package:beast/src/viewmodels/user_details_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider_architecture/viewmodel_provider.dart';

@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 class TextLink extends StatelessWidget {
   final String text;
   final Function onPressed;
+  final Color color;
   const TextLink(
     this.text, {
     this.onPressed,
+    this.color,
   });
 
   @override
@@ -18,7 +20,7 @@ class TextLink extends StatelessWidget {
         text,
         overflow: TextOverflow.clip,
         style: TextStyle(
-          color: Config.whiteColor,
+          color: color,
           fontWeight: FontWeight.bold,
           fontSize: screenWidth(context) * 0.04,
         ),

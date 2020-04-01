@@ -21,7 +21,7 @@ class User {
     List<String> choose() {
       data['friends'].forEach((v) {
         friendsFromMap.add(v);
-        print(v);
+        // print(v);
       });
       return friendsFromMap;
     }

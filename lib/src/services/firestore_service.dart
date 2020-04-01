@@ -107,30 +107,6 @@ class FirestoreService {
     return freinds;
   }
 
-  // Future changeFriendsList({
-  //   @required User currentUser,
-  //   @required User friendToAdd,
-  // }) async {
-  //   List<String> friends = [];
-  //   await _usersCollectionReference.document(currentUser.uid).get().then((doc) {
-  //     doc.data['friends'].forEach((v) {
-  //       friends.add(v);
-  //     });
-  //   });
-
-  //   if (friends.contains(friendToAdd.uid)) {
-  //     removeFromFriendsList(
-  //       currentUser: currentUser,
-  //       friendToRemove: friendToAdd,
-  //     );
-  //   } else {
-  //     addToFriendsList(
-  //       currentUser: currentUser,
-  //       friendToAdd: friendToAdd,
-  //     );
-  //   }
-  // }
-
   Future changeFriendsList({
     @required User currentUser,
     @required User friendToAdd,
@@ -187,8 +163,7 @@ class FirestoreService {
     @required String messageType,
   }) async {
     try {
-      if ((await checkIfChatIsCreated(sender: sender, receiver: receiver)) ==
-          false) {
+      if (!(await checkIfChatIsCreated(sender: sender, receiver: receiver))) {
         await createChat(
           sender: sender,
           receiver: receiver,
@@ -197,10 +172,7 @@ class FirestoreService {
       }
 
       Message _message;
-      var messageMap;
-
-      Chat chat;
-      var chatMap;
+      var messagesMap;
 
       _message = Message(
         receiverId: receiver.uid,
@@ -211,38 +183,28 @@ class FirestoreService {
         mediaUrls: messageType == TEXT_MESSAGE_TYPE ? [] : mediaUrls,
       );
 
-      messageMap = _message.toJson();
-
-      await _messagesCollectionReference
-          .document(_message.senderId)
-          .collection(_message.receiverId)
-          .add(messageMap);
-
-      await _messagesCollectionReference
-          .document(_message.receiverId)
-          .collection(_message.senderId)
-          .add(messageMap);
-
-      List<Message> messages = await getMessagesList(
-        sender: sender,
-        receiver: receiver,
-      );
-
-      chat = Chat(
-        sender: sender,
-        receiver: receiver,
-        messages: messages,
-      );
-
-      chatMap = chat.toJson();
+      messagesMap = [
+        _message.toJson(),
+      ];
 
       await _chatsCollectionReference
           .document('${sender.uid}')
           .collection('${sender.uid}')
           .document('${receiver.uid}')
           .updateData(
-            chatMap,
-          );
+        {
+          'messages': FieldValue.arrayUnion(messagesMap),
+        },
+      );
+      await _chatsCollectionReference
+          .document('${receiver.uid}')
+          .collection('${receiver.uid}')
+          .document('${sender.uid}')
+          .updateData(
+        {
+          'messages': FieldValue.arrayUnion(messagesMap),
+        },
+      );
     } catch (e) {
       return e;
     }
@@ -282,60 +244,66 @@ class FirestoreService {
     @required User sender,
     @required User receiver,
   }) async {
-    Chat chat = Chat(
-      sender: sender,
-      receiver: receiver,
-      messages: [],
-    );
+    try {
+      if (await checkIfChatIsCreated(
+        sender: sender,
+        receiver: receiver,
+      )) {
+        return 'You already have a chat created with this person';
+      }
 
-    var chatMap = chat.toJson();
+      Chat chat = Chat(
+        sender: sender,
+        receiver: receiver,
+        messages: [],
+        timestamp: Timestamp.now(),
+      );
 
-    await _chatsCollectionReference
-        .document('${sender.uid}')
-        .collection('${sender.uid}')
-        .document('${receiver.uid}')
-        .setData(
-          chatMap,
-        );
+      var chatMap = chat.toJson();
 
-    await _chatsCollectionReference
-        .document('${receiver.uid}')
-        .collection('${receiver.uid}')
-        .document('${sender.uid}')
-        .setData(
-          chatMap,
-        );
+      await _chatsCollectionReference
+          .document('${sender.uid}')
+          .collection('${sender.uid}')
+          .document('${receiver.uid}')
+          .setData(
+            chatMap,
+          );
+
+      await _chatsCollectionReference
+          .document('${receiver.uid}')
+          .collection('${receiver.uid}')
+          .document('${sender.uid}')
+          .setData(
+            chatMap,
+          );
+    } catch (e) {
+      return e;
+    }
   }
 
-  Future checkIfChatIsCreated({
+  Future<bool> checkIfChatIsCreated({
     @required User sender,
     @required User receiver,
   }) async {
     try {
-      Future<bool> checkChats() async {
-        if (await _chatsCollectionReference
-                .document('${sender.uid}')
-                .collection('${sender.uid}')
-                .document('${receiver.uid}')
-                .get() !=
-            null) {
-          return true;
-        } else {
-          return false;
-        }
-      }
+      DocumentSnapshot documentSnapshot = await _chatsCollectionReference
+          .document('${sender.uid}')
+          .collection('${sender.uid}')
+          .document('${receiver.uid}')
+          .get();
 
-      if (await checkChats() == true) {
+      if (documentSnapshot.exists) {
         return true;
       } else {
         return false;
       }
     } catch (e) {
       print('cc' + e);
+      return e;
     }
   }
 
-  Stream<DocumentSnapshot> chatsStream({
+  Stream<DocumentSnapshot> chatStream({
     @required User sender,
     @required User receiver,
   }) {
@@ -345,5 +313,15 @@ class FirestoreService {
         .document('${receiver.uid}')
         .get()
         .asStream();
+  }
+
+  Stream<QuerySnapshot> chatsStream({
+    @required User sender,
+  }) {
+    return _chatsCollectionReference
+        .document('${sender.uid}')
+        .collection('${sender.uid}')
+        .orderBy(TIMESTAMP_FIELD_NAME, descending: false)
+        .snapshots();
   }
 }

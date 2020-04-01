@@ -1,9 +1,5 @@
 import 'package:beast/src/constants/config.dart';
-import 'package:beast/src/services/navigation_service.dart';
-import 'package:beast/src/ui/shared/ui_helpers.dart';
-import 'package:beast/src/ui/widgets/custom_app_bar.dart';
 import 'package:beast/src/ui/widgets/new_chat_fab.dart';
-import 'package:beast/src/ui/widgets/user_circle.dart';
 import 'package:beast/src/viewmodels/chats_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider_architecture/provider_architecture.dart';
@@ -25,12 +21,12 @@ class _ChatsViewState extends State<ChatsView> {
         return Scaffold(
           backgroundColor: Config.blackColor,
           appBar: model.customAppBar(),
-          floatingActionButton: NewChatFab(
-            onTap: () {
-              print('Searching for users to chat with');
-              model.navigateToSearchView();
-            },
-          ),
+          // floatingActionButton: NewChatFab(
+          //   onTap: () {
+          //     print('Searching for users to chat with');
+          //     model.navigateToSearchView();
+          //   },
+          // ),
           body: model.buildChatsList(),
         );
       },

@@ -1,15 +1,19 @@
+import 'package:beast/src/constants/strings.dart';
 import 'package:beast/src/models/message.dart';
 import 'package:beast/src/models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Chat {
   User sender;
   User receiver;
   List<Message> messages;
+  Timestamp timestamp;
 
   Chat({
     this.sender,
     this.receiver,
     this.messages,
+    this.timestamp,
   });
 
   static List<Message> convertMapToMessage(Map<String, dynamic> map) {
@@ -32,6 +36,7 @@ class Chat {
     this.sender = convertMapToUser(map, 'sender');
     this.receiver = convertMapToUser(map, 'receiver');
     this.messages = convertMapToMessage(map);
+    this.timestamp = map[TIMESTAMP_FIELD_NAME];
   }
 
   static Map convertUserToMap(User user) {
@@ -54,6 +59,7 @@ class Chat {
       'sender': convertUserToMap(sender),
       'receiver': convertUserToMap(receiver),
       'messages': convertMessagesToMap(messages),
+      TIMESTAMP_FIELD_NAME: timestamp,
     };
   }
 }

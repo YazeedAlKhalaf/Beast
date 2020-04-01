@@ -143,7 +143,7 @@ class SearchViewModel extends BaseModel {
           return CustomTile(
             mini: false,
             onTap: () {
-              navigateToChatView(
+              navigateToUserDetailsView(
                 receiver: searchedUser,
               );
             },
@@ -169,11 +169,9 @@ class SearchViewModel extends BaseModel {
               ),
             ),
             trailing: BusyButton(
-              title: friendsIds.contains(searchedUser.uid) ? 'Add' : 'Remove',
+              title: friendsIds.contains(searchedUser.uid) ? 'Remove' : 'Add',
               busy: busy,
               onPressed: () async {
-                print(currentUser.friends);
-
                 setBusy(true);
 
                 notifyListeners();
@@ -194,11 +192,11 @@ class SearchViewModel extends BaseModel {
     );
   }
 
-  navigateToChatView({
+  navigateToUserDetailsView({
     User receiver,
   }) {
     navigationService.navigateTo(
-      ChatViewRoute,
+      UserDetailsViewRoute,
       arguments: receiver,
     );
   }
