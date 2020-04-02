@@ -55,6 +55,9 @@ dependencies:
   # image picker
   image_picker: ^0.6.4
 
+  # image cropper
+  image_cropper: ^1.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

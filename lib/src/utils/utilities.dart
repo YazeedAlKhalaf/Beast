@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:beast/src/constants/config.dart';
 import 'package:flutter_video_compress/flutter_video_compress.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Utils {
@@ -55,5 +57,34 @@ class Utils {
         return null;
       }
     }
+  }
+
+  crop({
+    File imageFile,
+  }) async {
+    if (imageFile == null) return null;
+
+    File croppedFile = await ImageCropper.cropImage(
+      sourcePath: imageFile.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+      ],
+      androidUiSettings: AndroidUiSettings(
+        toolbarTitle: 'Crop',
+        toolbarColor: Config.blackColor,
+        toolbarWidgetColor: Config.whiteColor,
+        initAspectRatio: CropAspectRatioPreset.square,
+        lockAspectRatio: true,
+      ),
+      iosUiSettings: IOSUiSettings(
+        minimumAspectRatio: 1.0,
+        aspectRatioPickerButtonHidden: true,
+        aspectRatioLockEnabled: true,
+      ),
+    );
+
+    print(croppedFile.path);
+
+    return croppedFile;
   }
 }

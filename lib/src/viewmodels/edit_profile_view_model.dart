@@ -71,10 +71,14 @@ class EditProfileViewModel extends BaseModel {
       source: source,
     );
 
-    if (selectedImage != null) {
+    File croppedImage = await utils.crop(
+      imageFile: selectedImage,
+    );
+
+    if (croppedImage != null) {
       setBusy(true);
 
-      _newProfilePhoto = selectedImage;
+      _newProfilePhoto = croppedImage;
       notifyListeners();
 
       setBusy(false);
@@ -130,118 +134,121 @@ class EditProfileViewModel extends BaseModel {
   }
 
   buildBody() {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: ListView(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(30.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () async {
-                      await pickImage(
-                        source: ImageSource.gallery,
-                      );
-                    },
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        UserCircle(
-                          height: screenWidth(context) * 0.3,
-                          width: screenWidth(context) * 0.3,
-                          text: userInitials,
-                          textSize: screenWidth(context) * 0.1,
-                          image: _displayProfileImage(),
-                        ),
-                        Opacity(
-                          opacity: 0.4,
-                          child: Container(
-                            height: screenWidth(context) * 0.4,
-                            width: screenWidth(context) * 0.4,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Config.blackColor,
+    return AbsorbPointer(
+      absorbing: busy,
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: ListView(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(30.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () async {
+                        await pickImage(
+                          source: ImageSource.gallery,
+                        );
+                      },
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          UserCircle(
+                            height: screenWidth(context) * 0.3,
+                            width: screenWidth(context) * 0.3,
+                            text: userInitials,
+                            textSize: screenWidth(context) * 0.1,
+                            image: _displayProfileImage(),
+                          ),
+                          Opacity(
+                            opacity: 0.4,
+                            child: Container(
+                              height: screenWidth(context) * 0.4,
+                              width: screenWidth(context) * 0.4,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Config.blackColor,
+                              ),
                             ),
                           ),
-                        ),
-                        Text(
-                          'Change Profile\nPicture',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Config.whiteColor,
+                          Text(
+                            'Change Profile\nPicture',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Config.whiteColor,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  TextFormField(
-                    initialValue: currentUser.fullName,
-                    onSaved: (value) {
-                      _newFullName = value;
-                      notifyListeners();
-                    },
-                    style: TextStyle(
-                      color: Config.whiteColor,
-                    ),
-                    decoration: InputDecoration(
-                      labelText: 'Full Name',
-                      prefixIcon: Icon(
-                        Icons.person,
+                    TextFormField(
+                      initialValue: currentUser.fullName,
+                      onSaved: (value) {
+                        _newFullName = value;
+                        notifyListeners();
+                      },
+                      style: TextStyle(
                         color: Config.whiteColor,
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          screenWidth(context),
+                      decoration: InputDecoration(
+                        labelText: 'Full Name',
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: Config.whiteColor,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            screenWidth(context),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: screenWidth(context) * 0.05,
-                  ),
-                  TextFormField(
-                    initialValue: currentUser.email,
-                    onSaved: (value) {
-                      _newEmail = value;
-                      notifyListeners();
-                    },
-                    style: TextStyle(
-                      color: Config.whiteColor,
+                    SizedBox(
+                      height: screenWidth(context) * 0.05,
                     ),
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(
-                        Icons.person,
+                    TextFormField(
+                      initialValue: currentUser.email,
+                      onSaved: (value) {
+                        _newEmail = value;
+                        notifyListeners();
+                      },
+                      style: TextStyle(
                         color: Config.whiteColor,
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          screenWidth(context),
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: Config.whiteColor,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            screenWidth(context),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: screenWidth(context) * 0.1,
-                  ),
-                  BusyButton(
-                    busy: busy,
-                    title: 'Save Profile',
-                    onPressed: () async {
-                      setBusy(true);
-                      await _submit();
-                      setBusy(false);
-                    },
-                  ),
-                ],
+                    SizedBox(
+                      height: screenWidth(context) * 0.1,
+                    ),
+                    BusyButton(
+                      busy: busy,
+                      title: 'Save Profile',
+                      onPressed: () async {
+                        setBusy(true);
+                        await _submit();
+                        setBusy(false);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
