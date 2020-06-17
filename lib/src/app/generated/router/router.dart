@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route_annotations.dart';
 import 'package:beast/src/ui/views/chat/chat_view.dart';
 import 'package:beast/src/ui/views/chats/chats_view.dart';
 import 'package:beast/src/ui/views/edit_profile/edit_profile_view.dart';
+import 'package:beast/src/ui/views/friends_list/friends_list_view.dart';
 import 'package:beast/src/ui/views/login/login_view.dart';
 import 'package:beast/src/ui/views/profile/profile_view.dart';
 import 'package:beast/src/ui/views/search/search_view.dart';
@@ -35,4 +36,6 @@ class $Router {
   UserDetailsView userDetailsViewRoute;
 
   ViewMediaView viewMediaViewRoute;
+
+  FriendsListView friendsListViewRoute;
 }

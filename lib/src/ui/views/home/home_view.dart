@@ -19,7 +19,6 @@ class _HomeViewState extends State<HomeView> {
         Widget child,
       ) {
         return Scaffold(
-          backgroundColor: Config.blackColor,
           body: model.screens[model.currentIndex],
           bottomNavigationBar: BottomNavigationBar(
             backgroundColor: Config.blackColor,

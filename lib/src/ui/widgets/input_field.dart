@@ -107,6 +107,7 @@ class _InputFieldState extends State<InputField> {
                         alignment: Alignment.center,
                         child: Icon(
                           isPassword ? Icons.visibility : Icons.visibility_off,
+                          color: primaryColor,
                         ),
                       )
                     : Container(),

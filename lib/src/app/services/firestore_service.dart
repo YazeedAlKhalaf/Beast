@@ -338,4 +338,12 @@ class FirestoreService {
           userMap,
         );
   }
+
+  // Future<List<User>> getFriendsList({
+  //   @required User user,
+  // }) async {
+  //   List<User> friendsList;
+
+  //   await _usersCollectionReference.document(user.uid).get();
+  // }
 }

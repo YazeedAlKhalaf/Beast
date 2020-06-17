@@ -19,6 +19,7 @@ import 'package:beast/src/ui/views/profile/profile_view.dart';
 import 'package:beast/src/ui/views/search/search_view.dart';
 import 'package:beast/src/ui/views/user_details/user_details_view.dart';
 import 'package:beast/src/ui/views/view_media/view_media_view.dart';
+import 'package:beast/src/ui/views/friends_list/friends_list_view.dart';
 
 abstract class Routes {
   static const startupViewRoute = '/';
@@ -32,6 +33,7 @@ abstract class Routes {
   static const searchViewRoute = '/search-view-route';
   static const userDetailsViewRoute = '/user-details-view-route';
   static const viewMediaViewRoute = '/view-media-view-route';
+  static const friendsListViewRoute = '/friends-list-view-route';
   static const all = {
     startupViewRoute,
     homeViewRoute,
@@ -44,6 +46,7 @@ abstract class Routes {
     searchViewRoute,
     userDetailsViewRoute,
     viewMediaViewRoute,
+    friendsListViewRoute,
   };
 }
 
@@ -128,6 +131,16 @@ class Router extends RouterBase {
           builder: (context) => ViewMediaView(receiver: typedArgs.receiver),
           settings: settings,
         );
+      case Routes.friendsListViewRoute:
+        if (hasInvalidArgs<FriendsListViewArguments>(args)) {
+          return misTypedArgsRoute<FriendsListViewArguments>(args);
+        }
+        final typedArgs =
+            args as FriendsListViewArguments ?? FriendsListViewArguments();
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => FriendsListView(user: typedArgs.user),
+          settings: settings,
+        );
       default:
         return unknownRoutePage(settings.name);
     }
@@ -154,4 +167,10 @@ class UserDetailsViewArguments {
 class ViewMediaViewArguments {
   final User receiver;
   ViewMediaViewArguments({this.receiver});
+}
+
+//FriendsListView arguments holder class
+class FriendsListViewArguments {
+  final User user;
+  FriendsListViewArguments({this.user});
 }

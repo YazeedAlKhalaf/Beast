@@ -165,12 +165,12 @@ class ProfileViewModel extends CustomBaseViewModel {
                                     TextLink(
                                       'View Friends',
                                       color: Config.blackColor,
-                                      onPressed: () {
-                                        // TODO: ADD FRIENDS LIST VIEWING
-                                        dialogService.showDialog(
-                                          title: 'Coming Soon!',
-                                          description:
-                                              'This feature is under development and is coming soon!',
+                                      onPressed: () async {
+                                        await navigationService.navigateTo(
+                                          Routes.friendsListViewRoute,
+                                          arguments: FriendsListViewArguments(
+                                            user: currentUser,
+                                          ),
                                         );
                                       },
                                     ),

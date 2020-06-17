@@ -1,4 +1,5 @@
 import 'package:beast/src/app/constants/config.dart';
+import 'package:beast/src/ui/global/app_colors.dart';
 import 'package:beast/src/ui/global/ui_helpers.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +26,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         screenWidth(context) * 0.02,
       ),
       decoration: BoxDecoration(
-        color: Config.blackColor,
+        color: primaryColor,
         border: Border(
           bottom: BorderSide(
             color: Config.separatorColor,
@@ -35,7 +36,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       child: AppBar(
-        backgroundColor: Config.blackColor,
+        backgroundColor: primaryColor,
         elevation: 0,
         leading: leading != null ? leading : null,
         title: title,

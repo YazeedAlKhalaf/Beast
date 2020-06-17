@@ -59,6 +59,12 @@ class SignUpViewModel extends CustomBaseViewModel {
                 'The email you entered is already in use! \nPlease try using another one.',
           );
           break;
+        case 'Email Not Verified':
+          await dialogService.showDialog(
+            title: 'Something went wrong!',
+            description: 'Please verify your email!',
+          );
+          break;
         default:
           print(result);
           await dialogService.showDialog(

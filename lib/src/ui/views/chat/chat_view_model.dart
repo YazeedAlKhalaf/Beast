@@ -74,7 +74,9 @@ class ChatViewModel extends CustomBaseViewModel {
           onPressed: () {
             navigationService.navigateTo(
               Routes.userDetailsViewRoute,
-              arguments: receiver,
+              arguments: UserDetailsViewArguments(
+                receiver: receiver,
+              ),
             );
           },
         ),

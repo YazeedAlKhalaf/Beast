@@ -23,7 +23,14 @@ class AuthenticationService {
         email: email,
         password: password,
       );
+
       await _populateCurrentUser(authResult.user);
+
+      if (!authResult.user.isEmailVerified) {
+        await authResult.user.sendEmailVerification();
+        return 'Email Not Verified';
+      }
+
       return authResult.user != null;
     } catch (e) {
       return e.message;
@@ -53,6 +60,13 @@ class AuthenticationService {
         friends: friends,
       );
       await _firestoreService.createUser(_currentUser);
+
+      await _populateCurrentUser(authResult.user);
+
+      if (!authResult.user.isEmailVerified) {
+        await authResult.user.sendEmailVerification();
+        return 'Email Not Verified';
+      }
 
       return authResult.user != null;
     } catch (e) {

@@ -27,12 +27,13 @@ class MyApp extends StatelessWidget {
       initialRoute: Routes.startupViewRoute,
       onGenerateRoute: Router().onGenerateRoute,
       navigatorKey: locator<NavigationService>().navigatorKey,
-      theme: ThemeData.dark().copyWith(
+      theme: ThemeData.light().copyWith(
         primaryColor: primaryColor,
         accentColor: accentColor,
         textTheme: Theme.of(context).textTheme.apply(
               fontFamily: 'Open Sans',
             ),
+        dialogBackgroundColor: textColorWhite,
       ),
     );
   }
