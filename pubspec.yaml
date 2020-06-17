@@ -1,66 +1,61 @@
 name: beast
-description: A new Flutter project.
+description: A chat app build with Flutter + Firebase.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  
-  
-  # cached network image
-  cached_network_image: ^2.0.0
+  # Cupertino Icons
+  cupertino_icons: ^0.1.3
 
+  # Stacked
+  stacked: ^1.6.0
+  # third-party services
+  stacked_services: ^0.4.1
+  # navigation
+  auto_route: ^0.5.0
+  # inversion of control
+  get_it: ^4.0.2
+  injectable: ^0.4.0+1
+  # Flutter Spinkit
+  flutter_spinkit: ^4.1.2+1
+  # Logger
+  logger: ^0.9.1
+
+  # cached network image
+  cached_network_image: ^2.2.0+1
   # flutter video compress
   flutter_video_compress: ^0.3.7+8
-
   # video player
-  video_player: ^0.10.8+1
+  video_player: ^0.10.11+1
+  # image picker
+  image_picker: ^0.6.7+2
+  # image cropper
+  image_cropper: ^1.2.3
 
   # shimmer
-  shimmer: ^1.1.0
-
+  shimmer: ^1.1.1
   # gradient appbar
   gradient_app_bar: ^0.1.3
 
   # cloud firestore
-  cloud_firestore: ^0.13.4+1
-
+  cloud_firestore: ^0.13.6
   # firebase auth
-  firebase_auth: ^0.15.3
-
-  # http request
-  http: ^0.12.0+2
-
-  # async package to add additional Cancellable operations
-  async: ^2.0.8
-
-  # get it
-  get_it: ^3.0.0+1
-
-  # provider
-  provider: ^3.2.0
-
-  # provider architecture
-  provider_architecture: ^1.0.3
-
-  # cupertino icons (IOS Style)
-  cupertino_icons: ^0.1.2
-
+  firebase_auth: ^0.16.1
   # firebase storage
-  firebase_storage: ^3.1.5
-
-  # image picker
-  image_picker: ^0.6.4
-
-  # image cropper
-  image_cropper: ^1.2.1
+  firebase_storage: ^3.1.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  # Generators
+  build_runner: ^1.10.0
+  auto_route_generator: ^0.5.0
+  injectable_generator: ^0.4.1
 
 flutter:
   uses-material-design: true

@@ -1,6 +1,6 @@
-import 'package:beast/src/constants/config.dart';
-import 'package:beast/src/ui/shared/shared_styles.dart';
-import 'package:beast/src/ui/shared/ui_helpers.dart';
+import 'package:beast/src/ui/global/app_colors.dart';
+import 'package:beast/src/ui/global/shared_styles.dart';
+import 'package:beast/src/ui/global/ui_helpers.dart';
 import 'package:beast/src/ui/widgets/note_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,21 +21,22 @@ class InputField extends StatefulWidget {
   final Function(String) onChanged;
   final TextInputFormatter formatter;
 
-  InputField(
-      {@required this.controller,
-      @required this.placeholder,
-      this.enterPressed,
-      this.fieldFocusNode,
-      this.nextFocusNode,
-      this.additionalNote,
-      this.onChanged,
-      this.formatter,
-      this.validationMessage,
-      this.textInputAction = TextInputAction.next,
-      this.textInputType = TextInputType.text,
-      this.password = false,
-      this.isReadOnly = false,
-      this.smallVersion = false});
+  InputField({
+    @required this.controller,
+    @required this.placeholder,
+    this.enterPressed,
+    this.fieldFocusNode,
+    this.nextFocusNode,
+    this.additionalNote,
+    this.onChanged,
+    this.formatter,
+    this.validationMessage,
+    this.textInputAction = TextInputAction.next,
+    this.textInputType = TextInputType.text,
+    this.password = false,
+    this.isReadOnly = false,
+    this.smallVersion = false,
+  });
 
   @override
   _InputFieldState createState() => _InputFieldState();
@@ -87,9 +88,12 @@ class _InputFieldState extends State<InputField> {
                   obscureText: isPassword,
                   readOnly: widget.isReadOnly,
                   decoration: InputDecoration.collapsed(
-                      hintText: widget.placeholder,
-                      hintStyle:
-                          TextStyle(fontSize: widget.smallVersion ? 12 : 15)),
+                    hintText: widget.placeholder,
+                    hintStyle: TextStyle(
+                      color: primaryColor,
+                      fontSize: widget.smallVersion ? 12 : 15,
+                    ),
+                  ),
                 ),
               ),
               GestureDetector(
@@ -101,9 +105,10 @@ class _InputFieldState extends State<InputField> {
                         width: fieldHeight,
                         height: fieldHeight,
                         alignment: Alignment.center,
-                        child: Icon(isPassword
-                            ? Icons.visibility
-                            : Icons.visibility_off))
+                        child: Icon(
+                          isPassword ? Icons.visibility : Icons.visibility_off,
+                        ),
+                      )
                     : Container(),
               ),
             ],
@@ -114,9 +119,9 @@ class _InputFieldState extends State<InputField> {
             widget.validationMessage,
             color: Colors.red,
           ),
-        if (widget.additionalNote != null) verticalSpace(5),
+        if (widget.additionalNote != null) verticalSpaceSmall(context),
         if (widget.additionalNote != null) NoteText(widget.additionalNote),
-        verticalSpaceSmall
+        verticalSpaceSmall(context),
       ],
     );
   }

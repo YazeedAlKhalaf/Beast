@@ -1,4 +1,4 @@
-import 'package:beast/src/constants/config.dart';
+import 'package:beast/src/app/constants/config.dart';
 import 'package:flutter/material.dart';
 
 class UserCircle extends StatelessWidget {

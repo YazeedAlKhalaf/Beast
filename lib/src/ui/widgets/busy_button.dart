@@ -1,4 +1,4 @@
-import 'package:beast/src/ui/shared/shared_styles.dart';
+import 'package:beast/src/ui/global/shared_styles\.dart';
 import 'package:flutter/material.dart';
 
 /// A button that shows a busy indicator in place of title

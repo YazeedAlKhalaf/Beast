@@ -1,5 +1,5 @@
-import 'package:beast/src/constants/config.dart';
-import 'package:beast/src/ui/shared/ui_helpers.dart';
+import 'package:beast/src/app/constants/config.dart';
+import 'package:beast/src/ui/global/ui_helpers.dart';
 import 'package:flutter/material.dart';
 
 class CustomTile extends StatelessWidget {

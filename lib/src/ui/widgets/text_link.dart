@@ -1,4 +1,4 @@
-import 'package:beast/src/ui/shared/ui_helpers.dart';
+import 'package:beast/src/ui/global/ui_helpers.dart';
 import 'package:flutter/material.dart';
 
 class TextLink extends StatelessWidget {

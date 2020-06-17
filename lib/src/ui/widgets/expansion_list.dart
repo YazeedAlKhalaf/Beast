@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:beast/src/ui/shared/shared_styles.dart' as sharedStyles;
+import 'package:beast/src/ui/global/shared_styles.dart' as sharedStyles;
 
 class ExpansionList<T> extends StatefulWidget {
   final List<T> items;
@@ -129,7 +129,7 @@ class ExpansionListItem extends StatelessWidget {
                 title ?? '',
                 style: Theme.of(context)
                     .textTheme
-                    .subhead
+                    .subtitle1
                     .copyWith(fontSize: smallVersion ? 12 : 15),
               ),
             ),

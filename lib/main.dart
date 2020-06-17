@@ -1,16 +1,20 @@
-import 'package:beast/src/constants/config.dart';
-import 'package:beast/src/locator.dart';
-import 'package:beast/src/managers/dialog_manager.dart';
-import 'package:beast/src/services/dialog_service.dart';
-import 'package:beast/src/services/navigation_service.dart';
-import 'package:beast/src/ui/router.dart';
-import 'package:beast/src/ui/views/startup_view.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:beast/src/app/generated/locator/locator.dart';
+import 'package:beast/src/app/generated/router/router.gr.dart';
+import 'package:beast/src/ui/global/app_colors.dart';
+import 'package:stacked_services/stacked_services.dart';
 
-void main() {
+main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Sets logging level
+  Logger.level = Level.debug;
+
   // Register all the models and services before the app starts
   setupLocator();
 
+  // Runs the app :)
   runApp(MyApp());
 }
 
@@ -18,23 +22,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Beast',
-      builder: (context, child) => Navigator(
-        key: locator<DialogService>().dialogNavigationKey,
-        onGenerateRoute: (settings) => MaterialPageRoute(
-          builder: (context) => DialogManager(child: child),
-        ),
-      ),
-      navigatorKey: locator<NavigationService>().navigationKey,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Config.blackColor,
+      initialRoute: Routes.startupViewRoute,
+      onGenerateRoute: Router().onGenerateRoute,
+      navigatorKey: locator<NavigationService>().navigatorKey,
+      theme: ThemeData.dark().copyWith(
+        primaryColor: primaryColor,
+        accentColor: accentColor,
         textTheme: Theme.of(context).textTheme.apply(
               fontFamily: 'Open Sans',
             ),
       ),
-      home: StartUpView(),
-      onGenerateRoute: generateRoute,
     );
   }
 }
